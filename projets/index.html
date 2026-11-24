@@ -297,9 +297,9 @@ else{
   $('#aForm').addEventListener('submit',async e=>{
     e.preventDefault();const email=$('#aMail').value.trim();if(!email)return;
     $('#aBtn').disabled=true;$('#aMsg').textContent='Envoi…';
-    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
+    const {error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:location.origin+location.pathname}});
     $('#aBtn').disabled=false;
-    $('#aMsg').textContent=error?'Envoi impossible ('+error.message+'). Réessaie dans quelques minutes.':'Lien envoyé à '+email+'. Ouvre-le sur cet appareil.';
+    $('#aMsg').textContent=error?(/signup|not allowed|not found/i.test(error.message)?'Cette adresse n’a pas accès à l’appli. Demande une invitation.':'Envoi impossible ('+error.message+'). Réessaie dans quelques minutes.'):'Lien envoyé à '+email+'. Ouvre-le sur cet appareil.';
   });
   $('#logout').addEventListener('click',async()=>{await sb.auth.signOut();P={};try{localStorage.removeItem(LS)}catch(e){}render();showAuth(true)});
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load()});
