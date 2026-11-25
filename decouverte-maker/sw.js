@@ -1,5 +1,5 @@
 // Network first, cache as fallback: new cards and app updates arrive as soon as the phone is online.
-const CACHE = "dm-v1";
+const CACHE = "dm-v2";
 const FILES = ["./", "index.html", "app.js", "decouvertes.json", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

@@ -71,14 +71,28 @@ document.addEventListener("click",e=>{
 });
 $("q").addEventListener("input",e=>{state.q=e.target.value;renderList()});
 
+const SB_URL="https://bnjuccoewykxsvsjecfv.supabase.co",SB_KEY="sb_publishable_x-iKFVWL1nXrzswTnJns1w_XgdkjKBs";
+const FKEY="dm-fiches-v1";
+const clean=a=>(Array.isArray(a)?a:[]).filter(x=>x&&x.date&&x.titre);
+async function getJSON(url,opts,ms){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{...opts,signal:c.signal});if(!r.ok)throw new Error(r.status);return await r.json()}
+  finally{clearTimeout(t)}
+}
 async function load(){
+  const by={};
+  const add=a=>clean(a).forEach(x=>{by[String(x.date)]=x});
+  try{add(await getJSON("decouvertes.json",{cache:"no-cache"},6000))}catch(e){}
+  try{add(JSON.parse(localStorage.getItem(FKEY)||"[]"))}catch(e){}
+  let live=false;
   try{
-    const r=await fetch("decouvertes.json",{cache:"no-cache"});
-    if(!r.ok)throw new Error(r.status);
-    const data=await r.json();
-    state.offline=r.headers.get("x-dm-offline")==="1";
-    state.items=(Array.isArray(data)?data:[]).filter(x=>x&&x.date&&x.titre).map(x=>({...x,id:String(x.date)})).sort((a,b)=>b.date.localeCompare(a.date));
+    const rows=await getJSON(SB_URL+"/rest/v1/decouvertes?select=date,titre,categorie,quoi,pourquoi,idee,pratique,liens&order=date.asc",{headers:{apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},cache:"no-store"},8000);
+    add(rows);live=true;
+    try{localStorage.setItem(FKEY,JSON.stringify(clean(rows)))}catch(e){}
   }catch(e){}
+  state.offline=!live;
+  const items=Object.values(by).map(x=>({...x,id:String(x.date)})).sort((a,b)=>b.date.localeCompare(a.date));
+  if(items.length||!state.items.length)state.items=items;
   state.loaded=true;render();
 }
 render();load();
