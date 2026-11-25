@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Mes applis",
-  "short_name": "Applis",
+  "name": "Rabbit's Apps",
+  "short_name": "Rabbit's Apps",
   "description": "Toutes mes applis au même endroit.",
   "lang": "fr",
   "start_url": "./",

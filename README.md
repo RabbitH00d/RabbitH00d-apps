@@ -1,4 +1,4 @@
-# Mes applis
+# Rabbit's Apps
 
 Toutes mes petites applis, publiées avec GitHub Pages : https://rabbith00d.github.io/RabbitH00d-apps/
 
