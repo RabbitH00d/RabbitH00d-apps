@@ -7,6 +7,7 @@ Chaque appli vit dans son dossier, avec son propre `manifest.webmanifest` et ses
 | Dossier | Appli | Données |
 |---|---|---|
 | `projets/` | Mes projets : suivi de projets, priorités, rappels | Supabase (projet `apps`, table `projets`, accès limité au compte connecté) |
+| `pense-bete/` | Pense-bête : capture rapide de choses à faire (`!` urgent, `#étiquette`, dictée) | Supabase (projet `apps`, table `pense_bete`, accès limité au compte connecté) |
 | `decouverte-maker/` | Découverte maker : une découverte par jour | `decouverte-maker/decouvertes.json`, complété chaque matin par une tâche programmée |
 
 Style des icônes : carré de couleur pleine, pictogramme blanc simple, une couleur par appli.
