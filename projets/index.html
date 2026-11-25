@@ -113,7 +113,7 @@ textarea{resize:vertical;font-family:inherit}
 <section class="band"><div class="wrap">
   <h2>À attaquer maintenant</h2>
   <div class="focus" id="focus"></div>
-  <p class="hint" style="margin:12px 0 0">Classement automatique : priorité, échéance proche, rappel arrivé, projet délaissé depuis plus d’une semaine.</p>
+  <p class="hint" style="margin:12px 0 0">Classement : d’abord la priorité (P1, puis P2, puis P3), puis à priorité égale l’échéance proche, le rappel arrivé et le projet délaissé depuis plus d’une semaine.</p>
 </div></section>
 
 <section class="band all"><div class="wrap">
@@ -203,7 +203,7 @@ function render(){
   const late=all.filter(o=>o.status!=='fini'&&(dayN(o.due)??0)<0).length;
   const rem=all.filter(o=>o.status!=='fini'&&(dayN(o.review)??1)<=0).length;
   $('#stats').innerHTML=all.length?`<b>${act}</b> en cours · <b>${late}</b> en retard · <b>${rem}</b> rappel${rem>1?'s':''} arrivé${rem>1?'s':''}`:(space==='tout'?'Aucun projet pour l’instant.':'Aucun projet dans cet espace.');
-  const f=all.filter(inFocus).map(o=>({o,...score(o)})).sort((a,b)=>b.s-a.s).slice(0,3);
+  const f=all.filter(inFocus).map(o=>({o,...score(o)})).sort((a,b)=>(a.o.prio||3)-(b.o.prio||3)||b.s-a.s).slice(0,3);
   $('#focus').innerHTML=f.length?f.map(({o,why},i)=>{const n=next(o),id=esc(o.id);return `<article class="fc ${i===0?'hot':''}">
     <div class="fh"><span class="pr">P${esc(o.prio)}</span><span class="kd">${esc(SP[spOf(o)])}</span></div>
     <h3><button class="lnk" data-open="${id}">${esc(o.name)}</button></h3>
@@ -215,7 +215,7 @@ function render(){
   $('#chips').innerHTML=Object.entries(FL).map(([k,[l,fn]])=>`<button data-filter="${k}" aria-pressed="${filter===k}">${l} (${all.filter(fn).length})</button>`).join('');
   const q=$('#q').value.trim().toLowerCase(),srt=$('#sort').value;
   let rows=all.filter(FL[filter][1]).filter(o=>!q||[o.name,o.kind,o.notes,...(o.tasks||[]).map(t=>t.t)].join(' ').toLowerCase().includes(q));
-  const key={score:o=>-score(o).s,prio:o=>(o.prio||3)*1e5+(dayN(o.due)??9e4),due:o=>dayN(o.due)??9e4,touched:o=>-(dayN(o.touched)??-9e4)}[srt];
+  const key={score:o=>(o.prio||3)*1e4-score(o).s,prio:o=>(o.prio||3)*1e5+(dayN(o.due)??9e4),due:o=>dayN(o.due)??9e4,touched:o=>-(dayN(o.touched)??-9e4)}[srt];
   rows.sort((a,b)=>key(a)-key(b));
   $('#list').innerHTML=rows.length?rows.map(o=>{const n=next(o),d=dayN(o.due);return `<li><button class="row ${o.status==='fini'?'done':''}" data-open="${esc(o.id)}">
     <span class="dot p${esc(o.prio)}">P${esc(o.prio)}</span>
